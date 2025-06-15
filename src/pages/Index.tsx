@@ -77,21 +77,21 @@ const Index = () => {
       <header className="bg-white/80 backdrop-blur-sm border-b border-green-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-green-700 rounded-full flex items-center justify-center">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-green-700 rounded-full flex items-center justify-center shrink-0">
                 <Leaf className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-green-800">茶韵记</h1>
-                <p className="text-sm text-green-600">品茶·记录·分享</p>
+                <h1 className="text-lg sm:text-2xl font-bold text-green-800">茶韵记</h1>
+                <p className="text-xs sm:text-sm text-green-600">品茶·记录·分享</p>
               </div>
             </div>
             <Button 
               onClick={() => setShowRecordForm(true)}
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="bg-green-600 hover:bg-green-700 text-white w-10 h-10 p-0 sm:w-auto sm:h-auto sm:px-4 sm:py-2 flex items-center justify-center rounded-full sm:rounded-md shrink-0"
             >
-              <Plus className="w-4 h-4 mr-2" />
-              记录品茶
+              <Plus className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">记录品茶</span>
             </Button>
           </div>
         </div>
@@ -99,20 +99,20 @@ const Index = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Tabs defaultValue="journal" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8 bg-white/50 backdrop-blur-sm">
-            <TabsTrigger value="journal" className="flex items-center space-x-2">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mb-8 bg-white/50 backdrop-blur-sm h-auto">
+            <TabsTrigger value="journal" className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm py-2 sm:py-0">
               <BookOpen className="w-4 h-4" />
               <span>品茶日记</span>
             </TabsTrigger>
-            <TabsTrigger value="library" className="flex items-center space-x-2">
+            <TabsTrigger value="library" className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm py-2 sm:py-0">
               <Leaf className="w-4 h-4" />
               <span>茶叶库</span>
             </TabsTrigger>
-            <TabsTrigger value="community" className="flex items-center space-x-2">
+            <TabsTrigger value="community" className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm py-2 sm:py-0">
               <Users className="w-4 h-4" />
               <span>茶友圈</span>
             </TabsTrigger>
-            <TabsTrigger value="profile" className="flex items-center space-x-2">
+            <TabsTrigger value="profile" className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm py-2 sm:py-0">
               <Settings className="w-4 h-4" />
               <span>个人中心</span>
             </TabsTrigger>
