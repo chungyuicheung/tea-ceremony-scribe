@@ -1,8 +1,7 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Star, Clock, Thermometer, Droplets, Eye, Nose, Coffee } from "lucide-react";
+import { Star, Clock, Thermometer, Droplets, Eye, Wind, Coffee } from "lucide-react";
 
 interface TeaRecord {
   id: number;
@@ -81,7 +80,7 @@ const TeaJournal = ({ recentTeas }: TeaJournalProps) => {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="flex items-center space-x-2">
-                    <Nose className="w-4 h-4 text-green-600" />
+                    <Wind className="w-4 h-4 text-green-600" />
                     <div>
                       <p className="text-xs text-green-600">香气</p>
                       <p className="text-sm font-medium text-green-800">{tea.aroma}</p>
