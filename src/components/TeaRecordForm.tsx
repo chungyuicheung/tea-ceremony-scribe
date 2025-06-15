@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,9 +11,10 @@ import { useToast } from "@/hooks/use-toast";
 
 interface TeaRecordFormProps {
   onClose: () => void;
+  onSubmit: (formData: any) => void;
 }
 
-const TeaRecordForm = ({ onClose }: TeaRecordFormProps) => {
+const TeaRecordForm = ({ onClose, onSubmit }: TeaRecordFormProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
@@ -34,7 +34,19 @@ const TeaRecordForm = ({ onClose }: TeaRecordFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate required fields
+    if (!formData.name || !formData.type || !formData.aroma || !formData.taste || !formData.color) {
+      toast({
+        title: "请填写必要信息",
+        description: "请至少填写茶叶名称、类型、香气、口感和汤色",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     console.log("Tea record submitted:", formData);
+    onSubmit(formData);
     toast({
       title: "品茶记录已保存",
       description: "你的品茶体验已成功记录到茶韵记中",
@@ -70,17 +82,18 @@ const TeaRecordForm = ({ onClose }: TeaRecordFormProps) => {
             {/* 基本信息 */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="name">茶叶名称</Label>
+                <Label htmlFor="name">茶叶名称 *</Label>
                 <Input
                   id="name"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
                   placeholder="请输入茶叶名称"
                   className="mt-1"
+                  required
                 />
               </div>
               <div>
-                <Label htmlFor="type">茶叶类型</Label>
+                <Label htmlFor="type">茶叶类型 *</Label>
                 <Select value={formData.type} onValueChange={(value) => setFormData({...formData, type: value})}>
                   <SelectTrigger className="mt-1">
                     <SelectValue placeholder="选择茶叶类型" />
@@ -177,33 +190,36 @@ const TeaRecordForm = ({ onClose }: TeaRecordFormProps) => {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="aroma">香气描述</Label>
+                  <Label htmlFor="aroma">香气描述 *</Label>
                   <Input
                     id="aroma"
                     value={formData.aroma}
                     onChange={(e) => setFormData({...formData, aroma: e.target.value})}
                     placeholder="如：清香淡雅"
                     className="mt-1"
+                    required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="taste">口感描述</Label>
+                  <Label htmlFor="taste">口感描述 *</Label>
                   <Input
                     id="taste"
                     value={formData.taste}
                     onChange={(e) => setFormData({...formData, taste: e.target.value})}
                     placeholder="如：甘甜回甘"
                     className="mt-1"
+                    required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="color">汤色描述</Label>
+                  <Label htmlFor="color">汤色描述 *</Label>
                   <Input
                     id="color"
                     value={formData.color}
                     onChange={(e) => setFormData({...formData, color: e.target.value})}
                     placeholder="如：嫩绿明亮"
                     className="mt-1"
+                    required
                   />
                 </div>
               </div>

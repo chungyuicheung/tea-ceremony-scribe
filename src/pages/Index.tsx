@@ -10,10 +10,20 @@ import TeaLibrary from "@/components/TeaLibrary";
 import TeaCommunity from "@/components/TeaCommunity";
 import TeaJournal from "@/components/TeaJournal";
 
+interface TeaRecord {
+  id: number;
+  name: string;
+  type: string;
+  date: string;
+  rating: number;
+  aroma: string;
+  taste: string;
+  color: string;
+}
+
 const Index = () => {
   const [showRecordForm, setShowRecordForm] = useState(false);
-
-  const recentTeas = [
+  const [teaRecords, setTeaRecords] = useState<TeaRecord[]>([
     {
       id: 1,
       name: "龙井茶",
@@ -44,7 +54,22 @@ const Index = () => {
       taste: "绵柔甘醇",
       color: "红褐透亮"
     }
-  ];
+  ]);
+
+  const addTeaRecord = (formData: any) => {
+    const newRecord: TeaRecord = {
+      id: Date.now(), // Simple ID generation
+      name: formData.name,
+      type: formData.type,
+      date: formData.date,
+      rating: formData.rating[0],
+      aroma: formData.aroma,
+      taste: formData.taste,
+      color: formData.color
+    };
+    
+    setTeaRecords(prev => [newRecord, ...prev]);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-amber-50 to-orange-50">
@@ -94,7 +119,7 @@ const Index = () => {
           </TabsList>
 
           <TabsContent value="journal">
-            <TeaJournal recentTeas={recentTeas} />
+            <TeaJournal recentTeas={teaRecords} />
           </TabsContent>
 
           <TabsContent value="library">
@@ -114,7 +139,7 @@ const Index = () => {
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="text-center p-4 bg-green-50 rounded-lg">
-                      <div className="text-2xl font-bold text-green-700">128</div>
+                      <div className="text-2xl font-bold text-green-700">{teaRecords.length}</div>
                       <div className="text-sm text-green-600">品茶记录</div>
                     </div>
                     <div className="text-center p-4 bg-amber-50 rounded-lg">
@@ -138,7 +163,10 @@ const Index = () => {
       </div>
 
       {showRecordForm && (
-        <TeaRecordForm onClose={() => setShowRecordForm(false)} />
+        <TeaRecordForm 
+          onClose={() => setShowRecordForm(false)} 
+          onSubmit={addTeaRecord}
+        />
       )}
     </div>
   );
