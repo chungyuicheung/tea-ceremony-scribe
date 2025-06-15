@@ -4,11 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, BookOpen, Users, Settings, Leaf, Clock, Star, Camera } from "lucide-react";
+import { Plus, BookOpen, Users, Settings, Leaf, Clock, Star, Camera, HelpCircle } from "lucide-react";
 import TeaRecordForm from "@/components/TeaRecordForm";
 import TeaLibrary from "@/components/TeaLibrary";
 import TeaCommunity from "@/components/TeaCommunity";
 import TeaJournal from "@/components/TeaJournal";
+import OnboardingGuide from "@/components/OnboardingGuide";
 
 interface TeaRecord {
   id: number;
@@ -23,6 +24,7 @@ interface TeaRecord {
 
 const Index = () => {
   const [showRecordForm, setShowRecordForm] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [teaRecords, setTeaRecords] = useState<TeaRecord[]>([
     {
       id: 1,
@@ -86,13 +88,23 @@ const Index = () => {
                 <p className="text-xs sm:text-sm text-green-600">品茶·记录·分享</p>
               </div>
             </div>
-            <Button 
-              onClick={() => setShowRecordForm(true)}
-              className="bg-green-600 hover:bg-green-700 text-white w-10 h-10 p-0 sm:w-auto sm:h-auto sm:px-4 sm:py-2 flex items-center justify-center rounded-full sm:rounded-md shrink-0"
-            >
-              <Plus className="w-4 h-4 sm:mr-2" />
-              <span className="hidden sm:inline">记录品茶</span>
-            </Button>
+            <div className="flex items-center space-x-2">
+              <Button 
+                onClick={() => setShowOnboarding(true)}
+                variant="outline"
+                className="bg-white/80 hover:bg-green-50 border-green-200 text-green-700 w-10 h-10 p-0 sm:w-auto sm:h-auto sm:px-4 sm:py-2 flex items-center justify-center rounded-full sm:rounded-md shrink-0"
+              >
+                <HelpCircle className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">新手引导</span>
+              </Button>
+              <Button 
+                onClick={() => setShowRecordForm(true)}
+                className="bg-green-600 hover:bg-green-700 text-white w-10 h-10 p-0 sm:w-auto sm:h-auto sm:px-4 sm:py-2 flex items-center justify-center rounded-full sm:rounded-md shrink-0"
+              >
+                <Plus className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">记录品茶</span>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -162,6 +174,7 @@ const Index = () => {
         </Tabs>
       </div>
 
+      {showOnboarding && <OnboardingGuide onClose={() => setShowOnboarding(false)} />}
       {showRecordForm && (
         <TeaRecordForm 
           onClose={() => setShowRecordForm(false)} 
