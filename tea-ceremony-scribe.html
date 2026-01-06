@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>茶韵记 - Tea Ceremony Scribe</title>
+    <meta name="description" content="品茶·记录·分享 - Tea Ceremony Journal">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 222.2 84% 4.9%;
+            --primary: 222.2 47.4% 11.2%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 210 40% 96.1%;
+            --secondary-foreground: 222.2 47.4% 11.2%;
+            --muted: 210 40% 96.1%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --accent: 210 40% 96.1%;
+            --accent-foreground: 222.2 47.4% 11.2%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --ring: 222.2 84% 4.9%;
+            --radius: 0.5rem;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(to bottom, #f0fdf5, #fffbeb, #fff7ed);
+        }
+
+        .bg-gradient-to-br {
+            background: linear-gradient(to bottom right, #f0fdf5, #fffbeb, #fff7ed);
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(72, 187, 120, 0.2);
+        }
+
+        .header {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(72, 187, 120, 0.2);
+        }
+
+        .tabs-list {
+            background-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .tabs-trigger {
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            cursor: pointer;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+        }
+
+        .tabs-trigger.active {
+            background-color: #16a34a;
+            color: white;
+        }
+
+        .tabs-trigger:not(.active):hover {
+            background-color: #f0fdf5;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            max-width: 90%;
+            width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .star-rating {
+            display: inline-block;
+        }
+
+        .star {
+            color: #d1d5db;
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        .star.filled {
+            color: #fbbf24;
+        }
+
+        .tea-record {
+            border-left: 3px solid #16a34a;
+            padding-left: 1rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: #16a34a;
+            color: white;
+            border: 1px solid #16a34a;
+        }
+
+        .btn-primary:hover {
+            background-color: #15803d;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: #16a34a;
+            border: 1px solid #16a34a;
+        }
+
+        .btn-outline:hover {
+            background-color: #f0fdf5;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-green-600 to-green-700 rounded-full flex items-center justify-center shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 text-white">
+                            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4Z"></path>
+                            <path d="M6 1v3"></path>
+                            <path d="M18 1v3"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-lg sm:text-2xl font-bold text-green-800">茶韵记</h1>
+                        <p class="text-xs sm:text-sm text-green-600">品茶·记录·分享</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button id="helpButton" class="btn btn-outline w-10 h-10 p-0 sm:w-auto sm:h-auto sm:px-4 sm:py-2 rounded-full sm:rounded-md shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 sm:mr-2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                            <path d="M12 17h.01"></path>
+                        </svg>
+                        <span class="hidden sm:inline">新手引导</span>
+                    </button>
+                    <button id="recordButton" class="btn btn-primary w-10 h-10 p-0 sm:w-auto sm:h-auto sm:px-4 sm:py-2 rounded-full sm:rounded-md shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 sm:mr-2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span class="hidden sm:inline">记录品茶</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="w-full">
+            <div class="tabs-list grid w-full grid-cols-2 sm:grid-cols-4 mb-8">
+                <button class="tabs-trigger active flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm py-2 sm:py-0" data-tab="journal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
+                    </svg>
+                    <span>品茶日记</span>
+                </button>
+                <button class="tabs-trigger flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm py-2 sm:py-0" data-tab="library">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                        <path d="M18 6H5a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h13l4-3.5L18 6Z"></path>
+                        <path d="M10 10V8"></path>
+                        <path d="M14 10V8"></path>
+                    </svg>
+                    <span>茶叶库</span>
+                </button>
+                <button class="tabs-trigger flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm py-2 sm:py-0" data-tab="community">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <span>茶友圈</span>
+                </button>
+                <button class="tabs-trigger flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm py-2 sm:py-0" data-tab="profile">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.09a2 2 0 0 1 1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-1 1.73v.18a2 2 0 0 0 1 1.73l.43.25a2 2 0 0 1 1 1.73v.18a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 1 1.73v.18a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1-1-1.73l-.43-.25a2 2 0 0 1 1-1.73v-.18a2 2 0 0 0-2-2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-1-1.73V9.27a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 0 1-1.73V5.61a2 2 0 0 0-1-1.73l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <span>个人中心</span>
+                </button>
+            </div>
+
+            <div id="journalTab" class="tab-content">
+                <div class="grid gap-6">
+                    <div class="card border-green-100">
+                        <div class="p-6">
+                            <h2 class="text-xl font-bold text-green-800 mb-4">近期品茶</h2>
+                            <div id="teaRecordsList">
+                                <!-- Tea records will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="libraryTab" class="tab-content hidden">
+                <div class="card border-green-100">
+                    <div class="p-6">
+                        <h2 class="text-xl font-bold text-green-800 mb-4">茶叶库</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="border rounded-lg p-4 bg-white hover:shadow-md transition-shadow">
+                                <h3 class="font-semibold text-green-700">龙井茶</h3>
+                                <p class="text-sm text-gray-600">绿茶</p>
+                                <p class="text-xs text-gray-500 mt-2">产地：杭州西湖</p>
+                            </div>
+                            <div class="border rounded-lg p-4 bg-white hover:shadow-md transition-shadow">
+                                <h3 class="font-semibold text-green-700">铁观音</h3>
+                                <p class="text-sm text-gray-600">乌龙茶</p>
+                                <p class="text-xs text-gray-500 mt-2">产地：福建安溪</p>
+                            </div>
+                            <div class="border rounded-lg p-4 bg-white hover:shadow-md transition-shadow">
+                                <h3 class="font-semibold text-green-700">普洱熟茶</h3>
+                                <p class="text-sm text-gray-600">黑茶</p>
+                                <p class="text-xs text-gray-500 mt-2">产地：云南</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="communityTab" class="tab-content hidden">
+                <div class="card border-green-100">
+                    <div class="p-6">
+                        <h2 class="text-xl font-bold text-green-800 mb-4">茶友圈</h2>
+                        <div class="space-y-4">
+                            <div class="border rounded-lg p-4 bg-white">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-10 h-10 bg-green-200 rounded-full flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-green-600">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="9" cy="7" r="4"></circle>
+                                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold">茶友小王</h3>
+                                        <p class="text-sm text-gray-600">今天品尝了新买的碧螺春，香气清雅，回味甘甜</p>
+                                        <p class="text-xs text-gray-500 mt-1">2小时前</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border rounded-lg p-4 bg-white">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-10 h-10 bg-amber-200 rounded-full flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-amber-600">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="9" cy="7" r="4"></circle>
+                                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold">茶艺师李</h3>
+                                        <p class="text-sm text-gray-600">分享了泡茶技巧：水温控制在80-85度最适合绿茶</p>
+                                        <p class="text-xs text-gray-500 mt-1">5小时前</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="profileTab" class="tab-content hidden">
+                <div class="grid gap-6">
+                    <div class="card border-green-100">
+                        <div class="p-6">
+                            <h2 class="text-xl font-bold text-green-800 mb-4">个人统计</h2>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="text-center p-4 bg-green-50 rounded-lg">
+                                    <div class="text-2xl font-bold text-green-700" id="recordCount">3</div>
+                                    <div class="text-sm text-green-600">品茶记录</div>
+                                </div>
+                                <div class="text-center p-4 bg-amber-50 rounded-lg">
+                                    <div class="text-2xl font-bold text-amber-700">45</div>
+                                    <div class="text-sm text-amber-600">收藏茶叶</div>
+                                </div>
+                                <div class="text-center p-4 bg-orange-50 rounded-lg">
+                                    <div class="text-2xl font-bold text-orange-700">23</div>
+                                    <div class="text-sm text-orange-600">茶器收藏</div>
+                                </div>
+                                <div class="text-center p-4 bg-blue-50 rounded-lg">
+                                    <div class="text-2xl font-bold text-blue-700">12</div>
+                                    <div class="text-sm text-blue-600">茶友关注</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tea Record Form Modal -->
+    <div id="recordFormModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h2 class="text-xl font-bold text-green-800 mb-4">记录品茶</h2>
+            <form id="teaRecordForm">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">茶叶名称</label>
+                    <input type="text" id="teaName" class="w-full p-2 border border-gray-300 rounded-md" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">茶叶类型</label>
+                    <select id="teaType" class="w-full p-2 border border-gray-300 rounded-md" required>
+                        <option value="">选择茶叶类型</option>
+                        <option value="绿茶">绿茶</option>
+                        <option value="红茶">红茶</option>
+                        <option value="乌龙茶">乌龙茶</option>
+                        <option value="白茶">白茶</option>
+                        <option value="黄茶">黄茶</option>
+                        <option value="黑茶">黑茶</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">品茶日期</label>
+                    <input type="date" id="teaDate" class="w-full p-2 border border-gray-300 rounded-md" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">评分</label>
+                    <div class="star-rating">
+                        <span class="star" data-rating="1">★</span>
+                        <span class="star" data-rating="2">★</span>
+                        <span class="star" data-rating="3">★</span>
+                        <span class="star" data-rating="4">★</span>
+                        <span class="star" data-rating="5">★</span>
+                    </div>
+                    <input type="hidden" id="teaRating" value="0">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">香气</label>
+                    <input type="text" id="teaAroma" class="w-full p-2 border border-gray-300 rounded-md" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">口感</label>
+                    <input type="text" id="teaTaste" class="w-full p-2 border border-gray-300 rounded-md" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">汤色</label>
+                    <input type="text" id="teaColor" class="w-full p-2 border border-gray-300 rounded-md" required>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="cancelForm" class="btn btn-outline px-4 py-2">取消</button>
+                    <button type="submit" class="btn btn-primary px-4 py-2">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Onboarding Guide Modal -->
+    <div id="onboardingModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h2 class="text-xl font-bold text-green-800 mb-4">新手引导</h2>
+            <div class="space-y-4">
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <h3 class="font-semibold text-green-700">欢迎使用茶韵记</h3>
+                    <p class="text-sm text-gray-600 mt-2">这是一个专门用于记录品茶体验的应用，帮助您更好地品鉴和管理您的茶文化体验。</p>
+                </div>
+                <div class="p-4 bg-amber-50 rounded-lg">
+                    <h3 class="font-semibold text-amber-700">如何使用</h3>
+                    <ul class="list-disc list-inside text-sm text-gray-600 mt-2 space-y-1">
+                        <li>点击"记录品茶"按钮开始记录您的品茶体验</li>
+                        <li>在品茶日记中查看您的历史记录</li>
+                        <li>在茶叶库中了解更多茶叶知识</li>
+                        <li>在茶友圈中与其他茶友交流</li>
+                    </ul>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h3 class="font-semibold text-blue-700">品茶记录建议</h3>
+                    <p class="text-sm text-gray-600 mt-2">记录茶叶名称、类型、品茶日期、香气、口感、汤色和评分，帮助您更好地了解和比较不同茶叶的特点。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample tea records data
+        let teaRecords = [
+            {
+                id: 1,
+                name: "龙井茶",
+                type: "绿茶",
+                date: "2024-06-15",
+                rating: 4.5,
+                aroma: "清香淡雅",
+                taste: "甘甜回甘",
+                color: "嫩绿明亮"
+            },
+            {
+                id: 2,
+                name: "铁观音",
+                type: "乌龙茶",
+                date: "2024-06-14",
+                rating: 5,
+                aroma: "兰花香",
+                taste: "醇厚甘润",
+                color: "金黄透亮"
+            },
+            {
+                id: 3,
+                name: "普洱熟茶",
+                type: "黑茶",
+                date: "2024-06-13",
+                rating: 4,
+                aroma: "陈香醇厚",
+                taste: "绵柔甘醇",
+                color: "红褐透亮"
+            }
+        ];
+
+        // DOM Elements
+        const tabs = document.querySelectorAll('.tabs-trigger');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const recordButton = document.getElementById('recordButton');
+        const helpButton = document.getElementById('helpButton');
+        const recordFormModal = document.getElementById('recordFormModal');
+        const onboardingModal = document.getElementById('onboardingModal');
+        const modalCloseButtons = document.querySelectorAll('.modal-close');
+        const cancelForm = document.getElementById('cancelForm');
+        const teaRecordForm = document.getElementById('teaRecordForm');
+        const teaRecordsList = document.getElementById('teaRecordsList');
+        const recordCount = document.getElementById('recordCount');
+        const stars = document.querySelectorAll('.star-rating .star');
+        const ratingInput = document.getElementById('teaRating');
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTeaRecords();
+            updateRecordCount();
+            
+            // Set default date to today
+            document.getElementById('teaDate').valueAsDate = new Date();
+        });
+
+        // Tab switching functionality
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetTab = tab.getAttribute('data-tab');
+                
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Hide all tab contents
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                // Show target tab content
+                document.getElementById(targetTab + 'Tab').classList.remove('hidden');
+            });
+        });
+
+        // Open record form modal
+        recordButton.addEventListener('click', () => {
+            recordFormModal.style.display = 'flex';
+        });
+
+        // Open onboarding modal
+        helpButton.addEventListener('click', () => {
+            onboardingModal.style.display = 'flex';
+        });
+
+        // Close modals
+        modalCloseButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                recordFormModal.style.display = 'none';
+                onboardingModal.style.display = 'none';
+            });
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === recordFormModal) {
+                recordFormModal.style.display = 'none';
+            }
+            if (e.target === onboardingModal) {
+                onboardingModal.style.display = 'none';
+            }
+        });
+
+        // Cancel form
+        cancelForm.addEventListener('click', () => {
+            recordFormModal.style.display = 'none';
+        });
+
+        // Star rating functionality
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const rating = parseInt(star.getAttribute('data-rating'));
+                ratingInput.value = rating;
+                
+                // Update star display
+                stars.forEach((s, index) => {
+                    if (index < rating) {
+                        s.classList.add('filled');
+                    } else {
+                        s.classList.remove('filled');
+                    }
+                });
+            });
+        });
+
+        // Form submission
+        teaRecordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const newRecord = {
+                id: Date.now(),
+                name: document.getElementById('teaName').value,
+                type: document.getElementById('teaType').value,
+                date: document.getElementById('teaDate').value,
+                rating: parseFloat(ratingInput.value),
+                aroma: document.getElementById('teaAroma').value,
+                taste: document.getElementById('teaTaste').value,
+                color: document.getElementById('teaColor').value
+            };
+            
+            // Add to the beginning of the array
+            teaRecords.unshift(newRecord);
+            
+            // Update the UI
+            renderTeaRecords();
+            updateRecordCount();
+            
+            // Reset form
+            teaRecordForm.reset();
+            ratingInput.value = 0;
+            stars.forEach(s => s.classList.remove('filled'));
+            
+            // Close modal
+            recordFormModal.style.display = 'none';
+        });
+
+        // Render tea records
+        function renderTeaRecords() {
+            teaRecordsList.innerHTML = '';
+            
+            if (teaRecords.length === 0) {
+                teaRecordsList.innerHTML = '<p class="text-gray-500 text-center py-4">暂无品茶记录</p>';
+                return;
+            }
+            
+            teaRecords.forEach(record => {
+                const recordElement = document.createElement('div');
+                recordElement.className = 'tea-record border-b border-gray-100 py-4 last:border-b-0';
+                recordElement.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-semibold text-lg">${record.name}</h3>
+                            <div class="flex items-center space-x-2 mt-1">
+                                <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">${record.type}</span>
+                                <span class="text-sm text-gray-500">${record.date}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-yellow-500">${'★'.repeat(Math.floor(record.rating))}${record.rating % 1 !== 0 ? '★' : ''}</span>
+                            <span class="ml-1 text-sm text-gray-500">${record.rating}</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mt-3 text-sm">
+                        <div><span class="font-medium">香气：</span>${record.aroma}</div>
+                        <div><span class="font-medium">口感：</span>${record.taste}</div>
+                        <div><span class="font-medium">汤色：</span>${record.color}</div>
+                    </div>
+                `;
+                teaRecordsList.appendChild(recordElement);
+            });
+        }
+
+        // Update record count
+        function updateRecordCount() {
+            recordCount.textContent = teaRecords.length;
+        }
+    </script>
+</body>
+</html>
